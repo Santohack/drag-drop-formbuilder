@@ -1,29 +1,52 @@
-import { Active, DragOverlay, useDndMonitor } from '@dnd-kit/core'
-import React from 'react'
-import { ElementType, FormElements } from './FormElements'
-import { SidebarBtnElementDragOverlay } from './SidebarBtnElement'
+import { Active, DragOverlay, useDndMonitor } from "@dnd-kit/core";
+import React, { useState } from "react";
+import { SidebarBtnElementDragOverlay } from "./SidebarBtnElement";
+import { ElementType, FormElements } from "./FormElements";
+import userDesigner from "./hooks/userDesigner";
 
-const DragOverlayWrapper = () => {
-    const [draggableItem, setDraggableItem] = React.useState<Active | null>(null)
-    useDndMonitor({
-        onDragStart: (event) => { console.log('onDragStart', event); setDraggableItem(event.active) },
-        onDragCancel(event) {
-            console.log('onDragCancel', event)
-            setDraggableItem(null)
-        },
-        onDragOver: (event) => { console.log('onDragOver', event); setDraggableItem(event.active) },
-        onDragEnd: (event) => { console.log('onDragEnd', event); setDraggableItem(null) },
-    })
-    let node = <div>No drag</div>
-    if (!draggableItem) return null;
-    const isSidebarBtnElement = draggableItem?.data?.current?.isDesignerBtnElement;
-    if (isSidebarBtnElement) {
-        const type = draggableItem?.data?.current?.type as ElementType;
-        node = <SidebarBtnElementDragOverlay formElement={FormElements[type]} />
+function DragOverlayWrapper() {
+  const { elements } = userDesigner();
+  const [draggedItem, setDraggedItem] = useState<Active | null>(null);
+
+  useDndMonitor({
+    onDragStart: (event) => {
+      setDraggedItem(event.active);
+    },
+    onDragCancel: () => {
+      setDraggedItem(null);
+    },
+    onDragEnd: () => {
+      setDraggedItem(null);
+    },
+  });
+
+  if (!draggedItem) return null;
+
+  let node = <div>No drag overlay</div>;
+  const isSidebarBtnElement = draggedItem.data?.current?.isDesignerBtnElement;
+
+  if (isSidebarBtnElement) {
+    const type = draggedItem.data?.current?.type as ElementType;
+    node = <SidebarBtnElementDragOverlay formElement={FormElements[type]} />;
+  }
+
+  const isDesignerElement = draggedItem.data?.current?.isDesignerElement;
+  if (isDesignerElement) {
+    const elementId = draggedItem.data?.current?.elementId;
+    const element = elements.find((el) => el.id === elementId);
+    if (!element) node = <div>Element not found!</div>;
+    else {
+      const DesignerElementComponent = FormElements[element.type].designerComponent;
+
+      node = (
+        <div className="flex bg-accent border rounded-md h-[120px] w-full py-2 px-4 opacity-80 pointer pointer-events-none">
+          <DesignerElementComponent elementInstance={element} />
+        </div>
+      );
     }
-    return (
-        <DragOverlay>{node}</DragOverlay>
-    )
+  }
+
+  return <DragOverlay>{node}</DragOverlay>;
 }
 
-export default DragOverlayWrapper
+export default DragOverlayWrapper;
