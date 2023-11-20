@@ -18,7 +18,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { toast } from "./ui/use-toast";
-
+import { createForm } from "@/action/form";
 import { BsFileEarmarkPlus } from "react-icons/bs";
 import { useRouter } from "next/navigation";
 
@@ -30,7 +30,7 @@ function CreateFormBtn() {
 
   async function onSubmit(values: formSchemaType) {
     try {
-      const formId = await CreateForm(values);
+      const formId = await createForm(values);
       toast({
         title: "Success",
         description: "Form created successfully",

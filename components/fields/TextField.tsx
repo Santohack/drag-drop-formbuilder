@@ -38,14 +38,37 @@ export const TextFieldFormElement:FormElement = {
         label:"Text Field",
     },
     designerComponent: DesignerComponent,
-    formComponent: () => <div>form component</div>,
+    formComponent:FormComponent,
     propertiesComponents: PropertiesComponent
 }
 type customInstance = FormElementInstance & {
     extraAttributes: typeof extraAttributes;
 }
 type propertiesSchemaTpye = z.infer<typeof propertiesSchema>
-
+function DesignerComponent({elementInstance}: {elementInstance:FormElementInstance}) {
+  const element = elementInstance as customInstance;
+  const { label, required,placeholder, helperText} = element.extraAttributes
+return <div className="flex flex-col gap-2 items-center">
+  <Label>
+      {label}
+      {required && "*"}
+  </Label>
+  <Input readOnly disabled placeholder={placeholder} />
+  {helperText && <p className="text-muted-foreground text-sm">{helperText}</p>}
+</div>
+}
+function FormComponent({elementInstance}: {elementInstance:FormElementInstance}) {
+  const element = elementInstance as customInstance;
+  const { label, required,placeholder, helperText} = element.extraAttributes
+return <div className="flex flex-col gap-2 items-center">
+  <Label>
+      {label}
+      {required && "*"}
+  </Label>
+  <Input  placeholder={placeholder} />
+  {helperText && <p className="text-muted-foreground text-sm">{helperText}</p>}
+</div>
+}
 function PropertiesComponent({elementInstance}: {elementInstance:FormElementInstance}) {
     const { updateElement } = userDesigner();
     const element = elementInstance as customInstance;
@@ -176,16 +199,4 @@ function PropertiesComponent({elementInstance}: {elementInstance:FormElementInst
         </>
     )
     
-}
-function DesignerComponent({elementInstance}: {elementInstance:FormElementInstance}) {
-    const element = elementInstance as customInstance;
-    const { label, required,placeholder, helperText} = element.extraAttributes
-  return <div className="flex flex-col gap-2 items-center">
-    <Label>
-        {label}
-        {required && "*"}
-    </Label>
-    <Input readOnly disabled placeholder={placeholder} />
-    {helperText && <p className="text-muted-foreground text-sm">{helperText}</p>}
-  </div>
 }
