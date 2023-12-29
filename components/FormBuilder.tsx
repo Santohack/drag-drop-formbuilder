@@ -51,7 +51,7 @@ const FormBuilder = ({ form }: { form: Form }) => {
                        )} */}
                     </div>
                 </nav>
-                <div className='w-full flex flex-grow items-center justify-center relative overflow-y-auto h-[200px] bg-accent bg-[url(/paper.svg)] dark:bg-[url(/paper-dark.svg)]'>
+                <div className='w-full flex flex-grow items-center justify-center  overflow-y-auto h-[200px] bg-accent bg-[url(/paper.svg)] dark:bg-[url(/paper-dark.svg)]'>
                     <Designer />
                 </div>
             </main>
